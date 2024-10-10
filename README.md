@@ -16,7 +16,7 @@
 <p align="center">
   <a href="https://github.com/juno181/Ex4DGS"><strong><code>Project Page (Comming soon)</code></strong></a>
   <a href="https://neurips.cc/virtual/2024/poster/94164"><strong><code>NeurIPS Paper</code></strong></a>
-  <a href="https://github.com/juno181/Ex4DGS"><strong><code>Source Code (Comming soon)</code></strong></a>
+  <a href="https://github.com/juno181/Ex4DGS"><strong><code>Source Code</code></strong></a>
   <a href="#-citation"><strong><code>Related Works</code></strong></a>
 </p>
 
