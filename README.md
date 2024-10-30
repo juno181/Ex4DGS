@@ -113,6 +113,10 @@ Run command:
 python render.py --model_path <path to trained model>  --source_path <path to dataset> --skip_train --iteration <trained iter>
 ```
 
+## Pretrained models
+
+We provide pretrained models in [release](https://github.com/juno181/Ex4DGS/releases/tag/v0.1).
+
 ## 📖 Citation
 <!-- If you find this code useful for your research, please cite our trajectory prediction papers :) -->
 
