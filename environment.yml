@@ -1,0 +1,24 @@
+name: Ex4DGS
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - cudatoolkit=11.6
+  - python=3.9
+  - pip=22.3.1
+  - pytorch=2.1.2
+  - torchaudio=2.1.2
+  - torchvision=0.16.2
+  - kornia
+  - plyfile
+  - natsort
+  - tqdm
+  - scipy
+  - scikit-image
+  - joblib
+  - numpy=1.16
+  - pip:
+    - submodules/diff_gaussian_rasterization_df
+    - submodules/simple-knn
+    - opencv-python
