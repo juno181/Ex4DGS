@@ -174,6 +174,7 @@ class Scene:
                                                             "point_cloud",
                                                             "iteration_" + str(self.loaded_iter),
                                                             "point_cloud.ply"))
+                self.set_sampling_len(gaussians.duration)
         else:
             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
 

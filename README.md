@@ -66,7 +66,8 @@ pip install torch
 The remaining packages can be installed with:
 
 ```shell
-pip install -r requirements
+pip install --upgrade setuptools cython wheel
+pip install -r requirements.txt
 ```
 
 <!-- Our default, provided install method is based on Conda package and environment management:

@@ -1,3 +1,0 @@
-[submodule "submodules/diff_gaussian_rasterization_df/third_party/glm"]
-	path = submodules/diff_gaussian_rasterization_df/third_party/glm
-	url = https://github.com/g-truc/glm.git
