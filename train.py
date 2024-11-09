@@ -49,6 +49,13 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     scene = Scene(dataset, gaussians, use_timepad=True)
     gaussians.training_setup(opt)
     args.duration = dataset.duration
+    
+    args.save_iterations.append(args.iterations)
+    # args.test_iterations.append(args.iterations)
+    args.checkpoint_iterations.append(args.iterations)
+    saving_iterations = args.save_iterations
+    # testing_iterations = args.test_iterations
+    checkpoint_iterations = args.checkpoint_iterations
         
     with open(os.path.join(args.model_path, "cfg_args"), 'w') as cfg_log_f:
         cfg_log_f.write(str(Namespace(**vars(args))))
@@ -295,6 +302,7 @@ def prepare_output_and_logger(args):
         print("Tensorboard not available: not logging progress")
     return tb_writer
 
+
 def training_report(tb_writer, iteration, Ll1, loss, l1_loss, elapsed, testing_iterations, scene : Scene, renderArgs, near, far):
     if tb_writer:
         tb_writer.add_scalar('train_loss_patches/l1_loss', Ll1.item(), iteration)
@@ -371,9 +379,9 @@ if __name__ == "__main__":
     parser.add_argument('--debug_from', type=int, default=-1)
     parser.add_argument('--detect_anomaly', action='store_true', default=False)
     parser.add_argument("--test_iterations", nargs="+", type=int, default=[7000_000])
-    parser.add_argument("--save_iterations", nargs="+", type=int, default=[60000, 80000, 7000_000])
+    parser.add_argument("--save_iterations", nargs="+", type=int, default=[30_000, 40_000])
     parser.add_argument("--quiet", action="store_true")
-    parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[60000, 80000, 7000_000])
+    parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[30_000, 40_000])
     parser.add_argument("--start_checkpoint", type=str, default = None)
     parser.add_argument("--configpath", type=str, default = "None")
     args = parser.parse_args(sys.argv[1:])

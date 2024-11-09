@@ -46,7 +46,7 @@
 
 Clone the source code of this repo.
 ```shell
-git clone --recurse-submodules https://github.com/juno181/Ex4DGS.git
+git clone https://github.com/juno181/Ex4DGS.git
 cd Ex4DGS
 ```
 
