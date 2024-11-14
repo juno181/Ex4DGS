@@ -126,7 +126,7 @@ class OptimizationParams(ParamGroup):
         self.extract_percentile = 0.98
         self.prune_invisible_interval = 6000
         self.densify_grad_threshold = 0.0002
-        self.densify_dgrad_threshold = 0.0002
+        self.densify_dgrad_threshold = 0.0001
         self.s_max_ssim = 0.6
         self.s_l1_thres = 0.08
         self.d_max_ssim = 0.6

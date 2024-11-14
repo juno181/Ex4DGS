@@ -608,7 +608,7 @@ class CGaussianModel:
         motion_xyz = np.zeros((num_points, self.keyframe_num * 3 * self.motion_degree))
         for idx, attr_name in enumerate(motion_xyz_names):
             motion_xyz[:, idx] = np.asarray(plydata_dynamic.elements[0][attr_name])
-        motion_xyz = motion_xyz.reshape((num_points, self.keyframe_num, 3 * self.motion_degree))\
+        motion_xyz = motion_xyz.reshape((num_points, self.keyframe_num, 3 * self.motion_degree))
         
         motion_features_dc = np.zeros((num_points, 3, 1))
         motion_features_dc[:, 0, 0] = np.asarray(plydata_dynamic.elements[0]["motion_f_dc_0"])

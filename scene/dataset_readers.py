@@ -242,11 +242,10 @@ def readN3VCameras(cam_extrinsics, cam_intrinsics, images_folder, near, far, sta
         poses_bounds = np.load(numpy_file)
 
         poses = poses_bounds[:, :15].reshape(-1, 3, 5)
-        bounds = poses_bounds[:, -2:]
-
-
-        near = bounds.min() * 0.95
-        far = bounds.max() * 1.05
+        
+        # bounds = poses_bounds[:, -2:]
+        # near = bounds.min() * 0.95
+        # far = bounds.max() * 1.05
         
         poses = poses_bounds[:, :15].reshape(-1, 3, 5) # 19, 3, 5
 

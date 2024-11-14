@@ -182,7 +182,7 @@ class Scene:
         point_cloud_path = os.path.join(self.model_path, "point_cloud/iteration_{}".format(iteration))
         self.gaussians.save_ply(os.path.join(point_cloud_path, "point_cloud.ply"))
 
-    def getTrainCameras(self, scale=1.0, shuffle=True, return_as="generator", n_job=4, return_path=False, get_img=True, job_batch_size=2):
+    def getTrainCameras(self, scale=1.0, shuffle=True, return_as="generator", n_job=2, return_path=False, get_img=True, job_batch_size=2):
         if self.lazy_loader:
             t_cams = list(compress(self.train_cameras[scale], self.samplelist))
             t_imgs = [(i.image_path, i.resolution, i.im_scale) for i in t_cams]
@@ -226,7 +226,7 @@ class Scene:
                         yield img
                 return t_cams, img_iterator()
             
-    def getTestCameras(self, scale=1.0, shuffle=True, return_as="generator", n_job=4, return_path=False, get_img=True, job_batch_size=2):
+    def getTestCameras(self, scale=1.0, shuffle=True, return_as="generator", n_job=2, return_path=False, get_img=True, job_batch_size=2):
         if self.lazy_loader:
             t_cams = list(compress(self.test_cameras[scale], self.test_samplelist))
             t_imgs = [(i.image_path, i.resolution, i.im_scale) for i in t_cams]
