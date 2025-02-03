@@ -56,7 +56,7 @@ conda create -n Ex4DGS python=3.9
 conda activate Ex4DGS
 ```
 
-Make sure to install CUDA and PyTorch versions that match your CUDA environment. We've tested on RTX 4090 GPU with PyTorch  version 2.12.
+Make sure to install CUDA and PyTorch versions that match your CUDA environment. We've tested on RTX 4090 GPU with PyTorch  version 2.1.2.
 Please refer https://pytorch.org/ for further information.
 
 ```shell
