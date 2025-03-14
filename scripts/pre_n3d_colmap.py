@@ -35,59 +35,60 @@ from dataset_utils.etc_utils import posetow2c_matrcs, rotmat2qvec, getcolmapsing
 from dataset_utils.colmap.pre_colmap import * 
 
 
-def extractframes(videopath):
+def extractframes(videopath, startframe=0, endframe=300, downscale=1):
+    output_dir, _ = os.path.splitext(videopath)
     cam = cv2.VideoCapture(videopath)
-    ctr = 0
-    sucess = True
-    for i in range(300):
-        if os.path.exists(os.path.join(videopath.replace(".mp4", ""), str(i) + ".png")):
-            ctr += 1
-    if ctr == 300 or ctr == 150: # 150 for 04_truck 
-        print("already extracted all the frames, skip extracting")
+    cam.set(cv2.CAP_PROP_POS_FRAMES, startframe)
+    
+    os.makedirs(output_dir, exist_ok=True)
+
+    if all(os.path.join(output_dir, "{:06d}.png".format(i)) for i in range(startframe, endframe)):
+        print(f"Already extracted all the frames in {output_dir}")
         return
-    ctr = 0
-    while ctr < 300:
-        try:
-            _, frame = cam.read()
 
-            savepath = os.path.join(videopath.replace(".mp4", ""), str(ctr) + ".png")
-            if not os.path.exists(videopath.replace(".mp4", "")) :
-                os.makedirs(videopath.replace(".mp4", ""))
+    for i in range(startframe, endframe):
+        success, frame = cam.read()
+        if not success:
+            print(f"Error reading frame {i}")
+            break
 
-            cv2.imwrite(savepath, frame)
-            ctr += 1 
-        except:
-            sucess = False
-            print("error")
+        if downscale > 1:
+            new_width, new_height = int(frame.shape[1] / downscale), int(frame.shape[0] / downscale)
+            frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
+
+        cv2.imwrite(os.path.join(output_dir,"{:06d}.png".format(i)), frame)
+
     cam.release()
+    
     return
-
+    
 
 def preparecolmapdynerf(folder, offset=0):
     folderlist = glob.glob(folder + "cam**/")
     imagelist = []
     savedir = os.path.join(folder, "colmap_" + str(offset))
-    if not os.path.exists(savedir):
-        os.mkdir(savedir)
+    if os.path.exists(savedir):
+        # remove the folder
+        shutil.rmtree(savedir)
+    os.makedirs(savedir, exist_ok=True)
     savedir = os.path.join(savedir, "input")
-    if not os.path.exists(savedir):
-        os.mkdir(savedir)
+    os.makedirs(savedir, exist_ok=True)
     for folder in folderlist :
-        imagepath = os.path.join(folder, str(offset) + ".png")
+        imagepath = os.path.join(folder, "{:06d}.png".format(offset))
         imagesavepath = os.path.join(savedir, folder.split("/")[-2] + ".png")
 
         shutil.copy(imagepath, imagesavepath)
 
     
-def convertdynerftocolmapdb(path, offset=0):
+def convertdynerftocolmapdb(path, offset=0, downscale=1):
     originnumpy = os.path.join(path, "poses_bounds.npy")
     video_paths = sorted(glob.glob(os.path.join(path, 'cam*.mp4')))
     projectfolder = os.path.join(path, "colmap_" + str(offset))
-    #sparsefolder = os.path.join(projectfolder, "sparse/0")
+    sparsefolder = os.path.join(projectfolder, "sparse/0")
     manualfolder = os.path.join(projectfolder, "manual")
 
-    # if not os.path.exists(sparsefolder):
-    #     os.makedirs(sparsefolder)
+    if not os.path.exists(sparsefolder):
+        os.makedirs(sparsefolder)
     if not os.path.exists(manualfolder):
         os.makedirs(manualfolder)
 
@@ -117,8 +118,8 @@ def convertdynerftocolmapdb(path, offset=0):
             colmapR = m[:3, :3]
             T = m[:3, 3]
             
-            H, W, focal = poses[i, :, -1]
-            
+            H, W, focal = poses[i, :, -1] / downscale
+
             colmapQ = rotmat2qvec(colmapR)
             # colmapRcheck = qvec2rotmat(colmapQ)
 
@@ -165,6 +166,7 @@ if __name__ == "__main__" :
     parser.add_argument("--startframe", default=0, type=int)
     parser.add_argument("--endframe", default=300, type=int)
     parser.add_argument("--stride", default=300, type=int)
+    parser.add_argument("--downscale", default=1, type=int)
 
     args = parser.parse_args()
     videopath = args.videopath
@@ -172,6 +174,7 @@ if __name__ == "__main__" :
     startframe = args.startframe
     endframe = args.endframe
     stride = args.stride
+    downscale = args.downscale
 
     if startframe >= endframe:
         print("start frame must smaller than end frame")
@@ -181,16 +184,17 @@ if __name__ == "__main__" :
         quit()
     if not os.path.exists(videopath):
         print("path not exist")
+        print(videopath)
         quit()
     
     if not videopath.endswith("/"):
         videopath = videopath + "/"
     
-    # # ## step1
-    # print("start extracting 300 frames from videos")
-    # videoslist = glob.glob(videopath + "*.mp4")
-    # for v in tqdm.tqdm(videoslist):
-    #     extractframes(v)
+    # ## step1
+    print("start extracting 300 frames from videos")
+    videoslist = glob.glob(videopath + "*.mp4")
+    for v in tqdm.tqdm(videoslist):
+        extractframes(v, startframe=startframe, endframe=endframe, downscale=downscale)
     
     # # ## step2 prepare colmap input 
     print("start preparing colmap image input")
@@ -200,7 +204,7 @@ if __name__ == "__main__" :
     print("start preparing colmap database input")
     # # ## step 3 prepare colmap db file 
     for offset in range(startframe, endframe, stride):
-        convertdynerftocolmapdb(videopath, offset)
+        convertdynerftocolmapdb(videopath, offset, downscale=downscale)
 
     # ## step 4 run colmap, per frame, if error, reinstall opencv-headless 
     for offset in range(startframe, endframe, stride):

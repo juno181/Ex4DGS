@@ -115,8 +115,8 @@ def getcolmapsinglen3d(folder, offset):
     if not os.path.exists(distortedmodel):
         os.makedirs(distortedmodel)
         
-    featureextract = "colmap feature_extractor --database_path " + dbfile+ " --image_path " + inputimagefolder
-
+    featureextract = "colmap feature_extractor --database_path " + dbfile+ " --image_path " + inputimagefolder + " --SiftExtraction.edge_threshold 30" + " --SiftExtraction.peak_threshold 0.004"
+    
     exit_code = os.system(featureextract)
     if exit_code != 0:
         exit(exit_code)
@@ -127,13 +127,16 @@ def getcolmapsinglen3d(folder, offset):
         exit(exit_code)
 
    # threshold is from   https://github.com/google-research/multinerf/blob/5b4d4f64608ec8077222c52fdf814d40acc10bc1/scripts/local_colmap_and_resize.sh#L62
-    triandmap = "colmap point_triangulator --database_path "+   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
+    triandmap = "colmap point_triangulator --database_path " +   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
     + " --input_path " + manualinputfolder + " --Mapper.ba_global_function_tolerance=0.000001"
    
     exit_code = os.system(triandmap)
     if exit_code != 0:
        exit(exit_code)
     print(triandmap)
+    
+    if os.path.exists(os.path.join(folder, "images")):
+        shutil.rmtree(os.path.join(folder, "images"))
 
     img_undist_cmd = "colmap" + " image_undistorter --image_path " + inputimagefolder + " --input_path " + distortedmodel  + " --output_path " + folder  \
     + " --output_type COLMAP" 
